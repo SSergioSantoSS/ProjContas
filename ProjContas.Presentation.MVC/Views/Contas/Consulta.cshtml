@@ -1,0 +1,55 @@
+﻿<div class="card">
+    <div class="card-body">
+
+        <h5 class="card-title">Consulta de Contas</h5>
+        <hr />
+
+        <table id="resultado" class="table table-hover table-sm">
+
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nome da Conta</th>
+                    <th>Valor</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+@section scripts {
+
+<script src="~/js/jquery-3.6.0.min.js"></script>
+<script src="~/js/signalr.min.js"></script>
+
+<script>
+
+            const connection = new signalR.HubConnectionBuilder()
+                                .withUrl('/contashub').build();
+
+            connection.start()
+                .catch(e => console.log(e));
+
+            //executando a função ReceiveMessage
+            connection.on('ReceiveMessage', (viewModel) => {
+
+                var tipo = viewModel.tipo == 1 ? 'Conta a Receber' : 'Conta a Pagar';
+
+                var data = "<tr>";
+
+                data += `<td>${viewModel.id}</td>`;
+                data += `<td>${viewModel.nome}</td>`;
+                data += `<td>${viewModel.valor}</td>`;
+                data += `<td>${tipo}</td>`;
+
+                data += "</tr>";
+                $("#resultado").append(data);
+
+            });
+
+</script>
+}
